@@ -8,34 +8,37 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BookListRazor.Pages.BookList
 {
-    public class CreateModel : PageModel
+    public class EditModel : PageModel
     {
-        private readonly ApplicationDbContext _db;
+        private ApplicationDbContext _db;
 
-        public CreateModel(ApplicationDbContext db)
+        public EditModel(ApplicationDbContext db)
         {
             _db = db;
         }
+
         [BindProperty]
         public Book Book { get; set; }
 
-        public void OnGet()
-        {
 
+        public async Task OnGet(int Id)
+        {
+            Book = await _db.Book.FindAsync(Id);
         }
 
         public async Task<IActionResult> OnPost()
         {
             if (ModelState.IsValid)
             {
-                await _db.Book.AddAsync(Book);  // it not send data to DB 
-                await _db.SaveChangesAsync();   // Push changes to Database
-                return RedirectToPage("Index");
+                var BookFromDb = await _db.Book.FindAsync(Book.Id);
+                BookFromDb.Name = Book.Name;
+                BookFromDb.ISBN = Book.ISBN;
+                BookFromDb.Author = Book.Author;
 
-            } else
-            {
-                return Page();
+                await _db.SaveChangesAsync();
+                return RedirectToPage("Index");
             }
+            return RedirectToPage();
         }
     }
 }

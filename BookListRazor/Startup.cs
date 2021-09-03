@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace BookListRazor
 {
+    
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -28,6 +29,7 @@ namespace BookListRazor
             // This was the configuration that we had to do to include entity framework inside the configuration pipeline
             // Middleware 
             services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
         }
 
@@ -54,6 +56,7 @@ namespace BookListRazor
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }
